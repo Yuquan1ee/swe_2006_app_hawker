@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "50864645308",
+    "project_id": "swe-2006-19ba7",
+    "storage_bucket": "swe-2006-19ba7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:50864645308:android:65934da0f57706c3ae1cb9",
+        "android_client_info": {
+          "package_name": "com.example.swe_2006_app_hawker"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAFWEQpRYAeky7WnrTgVQv6MXyKX_W4IIY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,33 @@
+name: swe_2006_app_hawker
+description: "A new Flutter project."
+publish_to: 'none' # Prevents publishing. Remove this to publish to pub.dev.
+version: 0.1.0
+
+environment:
+  sdk: '>=3.3.0 <4.0.0' # Make sure your SDK version matches your development environment.
+
+dependencies:
+  flutter:
+    sdk: flutter
+  http: ^1.2.1
+  csv: ^6.0.0 # Assuming you're using the csv package, add it here. Adjust the version as necessary.
+  path_provider: ^2.1.2
+  sqlite3: ^2.4.0
+  sqflite: ^2.3.2
+  intl: ^0.19.0
+  firebase_core: ^2.27.1
+  cloud_firestore: ^4.15.9
+  firebase_auth: ^4.17.9
+  firebase_storage: ^11.6.10
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+  
+
+flutter:
+  uses-material-design: true
+
+  # Make sure the indentation for assets is correct. It should be under the flutter section.
+
