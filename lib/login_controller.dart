@@ -20,7 +20,7 @@ class LoginController {
     List<Map<String, dynamic>> data = await getData();
     for (var user in data) {
       // Check if the username and password match
-      if (user['username'] == username && user['password'] == password) {
+      if ((user['username'] == username && user['password'] == password) || (user["email"] == username && user["password"] == password)) {
         return true;
       }
     }

@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:swe_2006_app_hawker/forget_credential_page.dart';
 import 'package:swe_2006_app_hawker/login_controller.dart';
 import 'customer_home_page.dart'; // Ensure this import path is correct based on your project structure
 import 'register_page.dart';
@@ -94,7 +95,7 @@ class _LoginPageState extends State<LoginPage> {
             TextField(
               controller: _usernameController,
               decoration: const InputDecoration(
-                labelText: 'Username',
+                labelText: 'Username/email',
               ),
             ),
             TextField(
@@ -121,6 +122,10 @@ class _LoginPageState extends State<LoginPage> {
             ),
             TextButton(
               onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => ForgetCredentialsPage()),
+                  );
                 // Implement functionality for "Forget Password?"
               },
               child: const Text('Forget Password?'),

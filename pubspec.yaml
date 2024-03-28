@@ -19,6 +19,8 @@ dependencies:
   cloud_firestore: ^4.15.9
   firebase_auth: ^4.17.9
   firebase_storage: ^11.6.10
+  carousel_slider: ^4.2.1
+
 
 dev_dependencies:
   flutter_test:
