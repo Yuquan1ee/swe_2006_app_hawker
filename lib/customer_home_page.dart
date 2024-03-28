@@ -35,6 +35,7 @@ class _CustomerHomePageState extends State<CustomerHomePage> {
       if (reviewsData.isNotEmpty) {
         reviewsDataList.add({
           'name': reviewsData['name'], // Ensure this matches the key returned by your API
+          "rating" : reviewsData["rating"],
           'reviews': reviewsData['reviews'], // Adjust according to your data structure
         });
       }
@@ -80,11 +81,30 @@ class _CustomerHomePageState extends State<CustomerHomePage> {
         width: 200.0,
         child: Card(
           child: ListTile(
-            title: Text(hawkerCenter['name']),
+            title: RichText(
+              text: TextSpan(
+                children: [
+                  TextSpan(
+                    text: '${hawkerCenter['name']} ',
+                    style: TextStyle(
+                      color: Colors.black, // Specify the color to ensure it matches ListTile's title style
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  TextSpan(
+                    text: '(${hawkerCenter["rating"]} ⭐ )', // Assuming rating is a string
+                    style: TextStyle(
+                      color: Colors.grey[600], // You can adjust the color as needed
+                    ),
+                  ),
+                ],
+              ),
+            ),
             subtitle: Text("Tap to see reviews"),
           ),
         ),
-      ),
+      )
+
     );
   }
   @override
