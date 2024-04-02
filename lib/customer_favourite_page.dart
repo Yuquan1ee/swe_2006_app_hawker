@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:swe_2006_app_hawker/customer_order_page.dart';
 import 'customer_home_page.dart'; // Adjust import as needed
 import 'customer_settings_page.dart'; // Adjust import as needed
-
+import 'package:swe_2006_app_hawker/customer_favourite_controller.dart';
 // Assuming CustomerFavoritePage is another placeholder you mentioned
 // import 'some_orders_page.dart'; // Placeholder - Replace with actual imports
 
@@ -16,8 +16,48 @@ class CustomerFavoritePage extends StatefulWidget {
 
 class _CustomerFavoritePageState extends State<CustomerFavoritePage> {
   // Assuming there might be a list to display the user's favorite items
-  final List<String> _favorites = ["Favorite 1", "Favorite 2", "Favorite 3"]; // Placeholder data
+  List<String> _favorites = []; // Initialize as empty
+  late FavouritePageController _controller;
 
+  @override
+  void initState() {
+    super.initState();
+    _controller = FavouritePageController(username: widget.username);
+    _fetchAndSetFavorites();
+  }
+
+  void _fetchAndSetFavorites() async {
+    var favorites = await _controller.fetchFavorites();
+    setState(() {
+      _favorites = favorites;
+    });
+  }
+
+  void _removeFavorite(String favoriteName) async {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text('Remove Favorite'),
+        content: Text('Are you sure you want to remove $favoriteName from your favorites?'),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(), // Dismiss the dialog
+            child: Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () async {
+              Navigator.of(context).pop(); // Dismiss the dialog
+              await _controller.removeFavoriteByName(favoriteName); // Adjust based on your method's name
+              _fetchAndSetFavorites(); // Refresh the favorites list
+            },
+            child: Text('Remove'),
+          ),
+        ],
+      );
+    },
+  );
+}
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,10 +73,7 @@ class _CustomerFavoritePageState extends State<CustomerFavoritePage> {
               title: Text(_favorites[index]),
               // Example of a trailing icon to represent some action on the favorite item
               trailing: Icon(Icons.delete, color: Colors.red),
-              onTap: () {
-                // Placeholder action when tapping a favorite item
-                print('Tapped on ${_favorites[index]}');
-              },
+              onTap: () => _removeFavorite(_favorites[index]),
             );
           },
         ),

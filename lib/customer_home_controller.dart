@@ -62,5 +62,122 @@ class CustomerHomePageController {
         .cast<Map<String, dynamic>>() // Cast back to a non-nullable Map list
         .toList();
   }
+<<<<<<< HEAD
+  
+  Future<void> addToFavorites(String favourite, String username) async {
+    try {
+      // Add a new document to the 'favourites' collection
+      await FirebaseFirestore.instance.collection('Favourites').add({
+        'favourite': favourite,
+        'username': username,
+      });
+      print("Added to favourites successfully.");
+    } catch (e) {
+      print("Error adding to favourites: $e");
+    }
+  }
+  Future<List<Map<String, dynamic>>> getAllReviews() async {
+  // Fetch the 'reviews' collection from Firestore
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection('reviews')
+        .get();
+
+    // Map each document to a Map<String, dynamic>, representing its data
+    return querySnapshot.docs
+        .map((doc) {
+          // Safely access data, ensuring we always work with a non-null Map
+          return doc.data() as Map<String, dynamic>? ?? {};
+        })
+        .toList(); // Convert the result to a List<Map<String, dynamic>>
+  }
+
+  Future<List<Map<String, dynamic>>> getAllstores() async {
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection('hawker_stall')
+        .get();
+
+    // Map each document to a Map<String, dynamic>, representing its data
+    return querySnapshot.docs
+        .map((doc) {
+          // Safely access data, ensuring we always work with a non-null Map
+          return doc.data() as Map<String, dynamic>? ?? {};
+        })
+        .toList(); // Convert the result to a List<Map<String, dynamic>>
+  }
+  Future<List<Map<String, dynamic>>> filterStoreByReview() async {
+  // Step 1: Fetch all reviews
+    List<Map<String, dynamic>> allReviews = await getAllReviews();
+
+    // Step 2: Group reviews by store name
+    Map<String, List<double>> storeRatings = {};
+    for (var review in allReviews) {
+      // Ensure the review has both a name and a rating
+      if (review.containsKey('Hawker name') && review.containsKey('ratings')) {
+        final storeName = review['Hawker name'];
+        final rating = double.tryParse(review['ratings'].toString()) ?? 0;
+
+        storeRatings.putIfAbsent(storeName, () => []).add(rating);
+      }
+    }
+
+    // Step 3: Calculate the average rating for each store
+    List<Map<String, dynamic>> storesWithAverageRatings = storeRatings.entries.map((entry) {
+      final averageRating = entry.value.reduce((a, b) => a + b) / entry.value.length;
+      return {
+        'Hawker name': entry.key,
+        'Average rating': averageRating,
+      };
+    }).toList();
+
+    // Step 4: Sort the stores by their average rating in descending order and take the top 5
+    storesWithAverageRatings.sort((a, b) => b['Average rating'].compareTo(a['Average rating']));
+    List<Map<String, dynamic>> topStores = storesWithAverageRatings.take(5).toList();
+
+    // Step 5: Return the top 5 stores
+    return topStores;
+  }
+  Future<List<Map<String, dynamic>>> getAllCuisine() async {
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection('List_of_Cuisine')
+        .get();
+
+    // Map each document to a Map<String, dynamic>, representing its data
+    return querySnapshot.docs
+        .map((doc) {
+          // Safely access data, ensuring we always work with a non-null Map
+          return doc.data() as Map<String, dynamic>? ?? {};
+        })
+        .toList(); // Convert the result to a List<Map<String, dynamic>>
+  }
+  
+  Future<List<Map<String, dynamic>>> filterStoreByCuisine(String cuisine) async {
+  // Step 1: Fetch all stores
+    List<Map<String, dynamic>> allStores = await getAllstores();
+
+    // Step 2: Initialize an empty list to store filtered stores
+    List<Map<String, dynamic>> filteredStores = [];
+
+    // Step 3: Loop through all stores and filter by cuisine
+    for (var store in allStores) {
+      // Assuming each store has a 'Cuisine' field and it's a String
+      // Adjust this check if 'Cuisine' is structured differently (e.g., a list)
+      if (store['Cuisine'] != null && store['Cuisine'] == cuisine) {
+        filteredStores.add(store);
+      }
+    }
+
+    // Step 4: Return the filtered list of stores
+    return filteredStores;
+  }
+
 
 }
+
+
+
+
+
+=======
+
+}
+>>>>>>> 1e60e060de92ea1804a2ca353ce4bb74c9bd06fb

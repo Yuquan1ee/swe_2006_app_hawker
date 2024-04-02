@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:swe_2006_app_hawker/customer_favourite_page.dart';
 import 'package:swe_2006_app_hawker/customer_order_page.dart';
 import 'package:swe_2006_app_hawker/customer_settings_page.dart';
+<<<<<<< HEAD
+import 'package:swe_2006_app_hawker/customer_store_page.dart';
+=======
+>>>>>>> 1e60e060de92ea1804a2ca353ce4bb74c9bd06fb
 import 'package:swe_2006_app_hawker/login_page.dart';
 import 'customer_home_controller.dart'; // Make sure to import your controller
 
@@ -18,11 +22,48 @@ class _CustomerHomePageState extends State<CustomerHomePage> {
   final TextEditingController _searchController = TextEditingController();
   List<Map<String, dynamic>> hawkerCenterReviews = [];
   CustomerHomePageController _controller = CustomerHomePageController();
+<<<<<<< HEAD
+
+  List<Map<String, dynamic>> topReviewedStores = [];
+  List<Map<String, dynamic>> filteredStores = [];
+  List<Map<String, dynamic>> listOfCuisines = [];
+=======
+>>>>>>> 1e60e060de92ea1804a2ca353ce4bb74c9bd06fb
 
   @override
   void initState() {
     super.initState();
     fetchHawkerCentresAndReviews();
+<<<<<<< HEAD
+    fetchTopReviewedStores();
+    fetchAllCuisines(); // Fetch all cuisines
+  }
+
+  Future<void> fetchAllCuisines() async {
+    try {
+      listOfCuisines = await _controller.getAllCuisine();
+      setState(() {});
+    } catch (e) {
+      print("Error fetching cuisines: $e");
+    }
+  }
+  Future<void> fetchStoresByCuisine(String cuisine) async {
+  // This method replaces the direct call to _controller.filterStoreByCuisine in the onTap of cuisineListView
+    filteredStores = await _controller.filterStoreByCuisine(cuisine);
+    setState(() {});
+  }
+
+  Future<void> fetchTopReviewedStores() async {
+    try {
+      List<Map<String, dynamic>> stores = await _controller.filterStoreByReview();
+      setState(() {
+        topReviewedStores = stores;
+      });
+    } catch (e) {
+      print("Error fetching top reviewed stores: $e");
+    }
+=======
+>>>>>>> 1e60e060de92ea1804a2ca353ce4bb74c9bd06fb
   }
 
   Future<void> fetchHawkerCentresAndReviews() async {
@@ -45,8 +86,94 @@ class _CustomerHomePageState extends State<CustomerHomePage> {
       hawkerCenterReviews = reviewsDataList;
     });
   }
+<<<<<<< HEAD
+  Widget _filteredStoresListView() {
+    return Container(
+      height: 120.0, // Set a fixed height for the horizontal list
+      child: ListView.builder(
+        shrinkWrap: true,
+        scrollDirection: Axis.horizontal, // Make the list scroll horizontally
+        itemCount: filteredStores.length,
+        itemBuilder: (context, index) {
+          final store = filteredStores[index];
+          return GestureDetector( // Use GestureDetector for tap interaction
+            onTap: () {
+              // Assuming CustomerStorePage is the correct destination and it accepts a username and storeName
+              Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => CustomerStorePage(
+                  username: widget.username, 
+                  storeName: store["Hawker name"],
+                ),
+              ));
+            },
+            child: Container(
+              width: 200.0, // Specify a fixed width for each item
+              child: Card(
+                elevation: 4.0, // Optional: adds shadow for a more button-like feel
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center, // Center the content vertically
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          store['Hawker name'], // Assuming 'Hawker name' is a key in your store Map
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16.0,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      Text(
+                        "Cuisine: ${store['Cuisine']}", // Adjust based on your data structure
+                        style: TextStyle(fontSize: 14.0),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+  
+  Widget cuisineListView(List<Map<String, dynamic>> cuisines) {
+    return Container(
+      height: 120.0,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: cuisines.length,
+        itemBuilder: (context, index) {
+          return GestureDetector(
+            onTap: () {
+              fetchStoresByCuisine(cuisines[index]['name']);
+            },
+            child: Container(
+              width: 200.0,
+              margin: EdgeInsets.symmetric(horizontal: 4.0),
+              child: Card(
+                child: Center(
+                  child: Text(
+                    cuisines[index]['name'],
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+  Widget _buildhawkercentreReviewItem(BuildContext context, Map<String, dynamic> hawkerCenter) {
+=======
 
   Widget _buildReviewItem(BuildContext context, Map<String, dynamic> hawkerCenter) {
+>>>>>>> 1e60e060de92ea1804a2ca353ce4bb74c9bd06fb
     return InkWell(
       onTap: () {
         showModalBottomSheet(
@@ -71,6 +198,20 @@ class _CustomerHomePageState extends State<CustomerHomePage> {
                       },
                     ),
                   ),
+<<<<<<< HEAD
+                  ElevatedButton(
+                    onPressed: () {
+                      _controller.addToFavorites(hawkerCenter['name'], widget.username).then((_) {
+                        Navigator.pop(context); // Close the modal after adding
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text("${hawkerCenter['name']} added to favorites")),
+                        );
+                      });
+                    },
+                    child: Text('Add to Favorites'),
+                  ),
+=======
+>>>>>>> 1e60e060de92ea1804a2ca353ce4bb74c9bd06fb
                 ],
               ),
             );
@@ -107,7 +248,55 @@ class _CustomerHomePageState extends State<CustomerHomePage> {
 
     );
   }
+<<<<<<< HEAD
+  Widget topReviewByStore_ListView(List<Map<String, dynamic>> topReviewedStores) {
+    return Container(
+      height: 120.0,
+      margin: EdgeInsets.only(top: 8.0), // Add some space above the list
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: topReviewedStores.length,
+        itemBuilder: (context, index) {
+          var store = topReviewedStores[index];
+          return Container(
+            width: 200.0, // Specify a fixed width for each card
+            child: Card(
+              elevation: 4.0, // Add some shadow for better visibility
+              child: InkWell(
+                onTap: () {
+                  // Optionally, implement onTap action, such as showing details about the store
+                },
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        store['Hawker name'], // Assuming 'Hawker name' holds the name of the store
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16.0,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    Text(
+                      "Rating: ${store['Average rating'].toStringAsFixed(1)}", // Assuming 'Average rating' holds the rating value
+                      style: TextStyle(fontSize: 14.0),
+                    ),
+                    // You can add more details or a list of reviews here
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+=======
   @override
+>>>>>>> 1e60e060de92ea1804a2ca353ce4bb74c9bd06fb
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -149,6 +338,35 @@ class _CustomerHomePageState extends State<CustomerHomePage> {
           ),
         ],
       ),
+<<<<<<< HEAD
+      body: SingleChildScrollView( // Use SingleChildScrollView to avoid overflow when the content is too long
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Text(
+                'Welcome, ${widget.username}!',
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              ),
+            ),
+            sectionTitle('Reviews for Hawker Centres'),
+            hawkercentre_reviewsListView(hawkerCenterReviews),
+            sectionTitle('Top picks by Reviews'),
+            topReviewByStore_ListView(topReviewedStores),
+            sectionTitle('Cuisine'),
+            cuisineListView(listOfCuisines),
+            if (filteredStores.isNotEmpty) ...[
+              sectionTitle('Selected Cuisine Stores'),
+              _filteredStoresListView(), // Display filtered stores here
+            ],
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+              child: Text('Pricing-specific reviews will go here'),
+            ),
+          ],
+        ),
+=======
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -177,6 +395,7 @@ class _CustomerHomePageState extends State<CustomerHomePage> {
             ),
           ),
         ],
+>>>>>>> 1e60e060de92ea1804a2ca353ce4bb74c9bd06fb
       ),
       bottomNavigationBar: BottomAppBar(
         color: Color.fromARGB(255, 238, 234, 237),
@@ -192,6 +411,31 @@ class _CustomerHomePageState extends State<CustomerHomePage> {
       ),
     );
   }
+
+  Widget sectionTitle(String title) => Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+        child: Text(
+          title,
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        ),
+      );
+
+  Widget hawkercentre_reviewsListView(List<Map<String, dynamic>> reviews) {
+    // Here you would build your ListView.builder to display the hawker center reviews
+    // For demonstration, returning a placeholder widget
+    return Container(
+      height: 120.0,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: reviews.length,
+        itemBuilder: (context, index) {
+          return _buildhawkercentreReviewItem(context, reviews[index]);
+        },
+      ),
+    );
+  }
+
+
 }
 
 
