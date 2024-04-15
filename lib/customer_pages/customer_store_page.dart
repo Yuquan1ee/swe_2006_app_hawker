@@ -85,82 +85,136 @@ class _CustomerStorePageState extends State<CustomerStorePage> {
   // Placeholder methods for review actions
   Future<void> _addReview() async {
   // First, check if the user already has a review for this store
-    final userReviews = await _controller.getMyStoreReview(widget.storeName, widget.username);
-    
-    if (userReviews.isNotEmpty) {
-      // User already has a review, show a dialog informing them
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text('Review Exists'),
-            content: Text('You have already reviewed this store.'),
-            actions: <Widget>[
-              TextButton(
-                child: Text('OK'),
-                onPressed: () {
-                  Navigator.of(context).pop(); // Close the dialog
-                },
-              ),
-            ],
-          );
-        },
-      );
-    } else {
-      // User hasn't reviewed this store, proceed to show the add review dialog
-      String reviewText = '';
-      int rating = 0; // Adjust based on your rating scale
+  final userReviews = await _controller.getMyStoreReview(widget.storeName, widget.username);
 
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text('Write a Review'),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                TextField(
-                  onChanged: (value) {
-                    reviewText = value;
-                  },
-                  decoration: InputDecoration(hintText: "Review Text"),
-                ),
-                TextField(
-                  onChanged: (value) {
-                    rating = int.tryParse(value) ?? 0;
-                  },
-                  decoration: InputDecoration(hintText: "Rating (e.g., 5)"),
-                  keyboardType: TextInputType.number,
-                ),
-              ],
+  if (userReviews.isNotEmpty) {
+    // User already has a review, show a dialog informing them
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Review Exists'),
+          content: Text('You have already reviewed this store.'),
+          actions: <Widget>[
+            TextButton(
+              child: Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
             ),
-            actions: <Widget>[
-              TextButton(
-                child: Text('Cancel'),
-                onPressed: () {
-                  Navigator.of(context).pop();
+          ],
+        );
+      },
+    );
+  } else {
+    // User hasn't reviewed this store, proceed to show the add review dialog
+    String reviewText = '';
+    int rating = 0; // Adjust based on your rating scale
+    String ratingError = ''; // Variable to hold the rating error message
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Write a Review'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              TextField(
+                onChanged: (value) {
+                  reviewText = value;
                 },
+                decoration: InputDecoration(hintText: "Review Text"),
               ),
-              TextButton(
-                child: Text('Submit'),
-                onPressed: () async {
-                  // Call the controller's addReview method
-                  await _controller.addReview(widget.username, widget.storeName, reviewText, rating);
-
-                  // Close the dialog
-                  Navigator.of(context).pop();
-
-                  // Refresh the data
-                  await _fetchStoreData();
+              TextField(
+                onChanged: (value) {
+                  // Validate and update the rating input
+                      if (RegExp(r'^[1-5]$').hasMatch(value)) {
+                        rating = int.parse(value);
+                        ratingError = ''; // Clear the error message if the input is valid
+                      } else {
+                        ratingError = 'Ratings can only be digits 1-5'; // Set the error message
+                      }
+                      setState(() {}); // Update the dialog state to reflect the error message
                 },
+                decoration: InputDecoration(
+                  hintText: "Rating (e.g., 5)",
+                  errorText: ratingError.isNotEmpty ? ratingError : null, // Display error message if any
+                ),
+                keyboardType: TextInputType.number,
               ),
             ],
-          );
-        },
-      );
-    }
-  }
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text('Submit'),
+              onPressed: () async {
+                // Validate review text length
+                if (reviewText.trim().split(' ').length <= 100) { // Ensure review text doesn't exceed 10 words
+                  if(ratingError.isEmpty){
+                    // Call the controller's addReview method
+                    await _controller.addReview(widget.username, widget.storeName, reviewText, rating);
 
+                    // Close the dialog
+                    Navigator.of(context).pop();
+
+                    // Refresh the data
+                    await _fetchStoreData();
+                  }
+                  else{
+                    // Show error dialog for invalid entry for ratings
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Text('Error'),
+                          content: Text('Ratings can only be digits 1-5.'),
+                          actions: <Widget>[
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: Text('OK'),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  }
+                } else {
+                  // Show error dialog for exceeding word limit
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Text('Error'),
+                        content: Text('Remarks should not exceed 100 words.'),
+                        actions: <Widget>[
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: Text('OK'),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                }
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
 
 
   Future<void> _editReview() async {
@@ -177,6 +231,7 @@ class _CustomerStorePageState extends State<CustomerStorePage> {
     // Temporary variables to hold the edited review text and rating
     String editedReviewText = currentReview;
     int editedRating = currentRating;
+    String ratingError = ''; // Variable to hold the rating error message
 
     // Show dialog to edit review text and rating
     showDialog(
@@ -197,9 +252,19 @@ class _CustomerStorePageState extends State<CustomerStorePage> {
               TextField(
                 controller: TextEditingController()..text = currentRating.toString(),
                 onChanged: (value) {
-                  editedRating = int.tryParse(value) ?? currentRating; // Keep current rating if parse fails
+                  // Validate and update the rating input
+                  if (RegExp(r'^[1-5]$').hasMatch(value)) {
+                    editedRating = int.parse(value);
+                    ratingError = ''; // Clear the error message if the input is valid
+                  } else {
+                    ratingError = 'Ratings can only be digits 1-5'; // Set the error message
+                  }
+                  setState(() {}); // Update the dialog state to reflect the error message
                 },
-                decoration: InputDecoration(hintText: "Rating (e.g., 5)"),
+                decoration: InputDecoration(
+                  hintText: "Rating (e.g., 5)",
+                  errorText: ratingError.isNotEmpty ? ratingError : null // Display error message if any
+                ),
                 keyboardType: TextInputType.number,
               ),
             ],
@@ -214,19 +279,63 @@ class _CustomerStorePageState extends State<CustomerStorePage> {
             TextButton(
               child: Text('Save Changes'),
               onPressed: () async {
-                // Assuming editMyReview is implemented in your controller
-                await _controller.editMyReview(
-                  widget.storeName, 
-                  widget.username, 
-                  editedReviewText, 
-                  editedRating
-                );
+                // Validate review text length
+                if (editedReviewText.trim().split(' ').length <= 100) { // Ensure review text doesn't exceed 10 words
+                  if(ratingError.isEmpty){
+                    // Assuming editMyReview is implemented in your controller
+                    await _controller.editMyReview(
+                      widget.storeName, 
+                      widget.username, 
+                      editedReviewText, 
+                      editedRating
+                    );
 
-                // Close the dialog
-                Navigator.of(context).pop();
+                    // Close the dialog
+                    Navigator.of(context).pop();
 
-                // Refresh the data to reflect the edit
-                await _fetchStoreData();
+                    // Refresh the data to reflect the edit
+                    await _fetchStoreData();
+                  }
+                  else{
+                    // Show error dialog for invalid entry for ratings
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Text('Error'),
+                          content: Text('Ratings can only be digits 1-5.'),
+                          actions: <Widget>[
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: Text('OK'),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  }
+                } else {
+                  // Show error dialog for exceeding word limit
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Text('Error'),
+                        content: Text('Remarks should not exceed 100 words.'),
+                        actions: <Widget>[
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: Text('OK'),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                }
               },
             ),
           ],
@@ -234,6 +343,7 @@ class _CustomerStorePageState extends State<CustomerStorePage> {
       },
     );
   }
+
 
   Future<void> _deleteReview() async {
   // Assuming the username and storeName are available via widget.username and widget.storeName

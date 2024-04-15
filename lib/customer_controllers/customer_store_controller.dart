@@ -44,6 +44,7 @@ class CustomerStoreController {
     
   }
 
+
   Future<void> addToFavorites(String favourite, String username) async {
     try {
       // Add a new document to the 'favourites' collection
@@ -56,6 +57,7 @@ class CustomerStoreController {
       print("Error adding to favourites: $e");
     }
   }
+
 
   Future<bool> isFavourite(String favourite, String username) async {
     try {
@@ -146,6 +148,7 @@ class CustomerStoreController {
     }
   }
 
+
   Future<void> addReview(String username, String storeName, String review, int rating) async {
     final collection = FirebaseFirestore.instance.collection('reviews');
 
@@ -165,6 +168,8 @@ class CustomerStoreController {
       print("Error adding review: $e");
     }
   }
+
+
   Future<void> editMyReview(String storeName, String username, String newReviewText, int newRating) async {
     final collection = FirebaseFirestore.instance.collection('reviews');
     
@@ -196,6 +201,7 @@ class CustomerStoreController {
       print("Error updating review: $e");
     }
   }
+
 
   Future<List<Map<String, dynamic>>> fetchStoreMenu(String storeName) async {
     FirebaseFirestore db = FirebaseFirestore.instance;
@@ -235,4 +241,3 @@ class CustomerStoreController {
 
 
 }
-
