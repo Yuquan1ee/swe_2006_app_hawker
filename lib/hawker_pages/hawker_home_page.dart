@@ -140,6 +140,12 @@ class _HawkerHomePageState extends State<HawkerHomePage> {
                   child: Text('Cancel')),
               TextButton(
                   onPressed: () async {
+                    // Check if name and price are not empty
+                    if (_nameController.text.isEmpty || _priceController.text.isEmpty) {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Please enter a Name and Price for the menu item.')));
+                      return; // Exit the method without adding or editing the menu item
+                    }
+
                     // Add or edit menu item
                     if (item == null) {
                       await _controller.addToMenu(stallName, _nameController.text, _descController.text, double.parse(_priceController.text));

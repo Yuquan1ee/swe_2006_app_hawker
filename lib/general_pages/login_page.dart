@@ -6,6 +6,7 @@ import 'package:swe_2006_app_hawker/general_controllers/login_controller.dart';
 import '../customer_pages/customer_home_page.dart'; // Ensure this import path is correct based on your project structure
 import 'register_page.dart';
 
+import 'package:google_fonts/google_fonts.dart'; // Import Google Fonts package
 
 
 Future <void> main() async{
@@ -19,7 +20,11 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
+      theme: ThemeData(
+        primaryColor: Color.fromARGB(255,33, 150, 243), // Set primary color to purple
+        textTheme: GoogleFonts.openSansTextTheme(Theme.of(context).textTheme), // Use Google Fonts for text
+      ),
       home: LoginPage(),
     );
   }
@@ -86,11 +91,15 @@ class _LoginPageState extends State<LoginPage> {
       _showFailedLoginDialog();
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('HawkerInOne', textAlign: TextAlign.center),
+        title: const Text(
+          'HawkerInOne',
+          textAlign: TextAlign.center,
+          ),
         centerTitle: true,
       ),
       body: Padding(
@@ -151,4 +160,5 @@ class _LoginPageState extends State<LoginPage> {
       ),
     );
   }
+
 }

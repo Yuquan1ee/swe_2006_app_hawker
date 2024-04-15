@@ -72,6 +72,7 @@ class _CustomerFavoritePageState extends State<CustomerFavoritePage> {
     );
   }
 
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -80,21 +81,32 @@ class _CustomerFavoritePageState extends State<CustomerFavoritePage> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: ListView.builder(
-          itemCount: _favorites.length,
-          itemBuilder: (context, index) {
-            return _buildFavoriteItem(_favorites[index]);
-          },
-        ),
+        child: _favorites.isEmpty
+            ? Center(
+                child: Text(
+                  'No favorited hawker stall yet.',
+                  style: TextStyle(fontSize: 18.0),
+                ),
+              )
+            : ListView.builder(
+                itemCount: _favorites.length,
+                itemBuilder: (context, index) {
+                  return _buildFavoriteItem(_favorites[index]);
+                },
+              ),
       ),
       bottomNavigationBar: BottomAppBar(
         color: Color.fromARGB(255, 238, 234, 237),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: <Widget>[
-            IconButton(icon: Icon(Icons.home, color: Colors.blue), onPressed: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => CustomerHomePage(username: widget.username)))),
+            IconButton(
+                icon: Icon(Icons.home, color: Colors.blue),
+                onPressed: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => CustomerHomePage(username: widget.username)))),
             IconButton(icon: Icon(Icons.favorite, color: Colors.blue), onPressed: () {}),
-            IconButton(icon: Icon(Icons.settings, color: Colors.blue), onPressed: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => CustomerSettingsPage(username: widget.username)))),
+            IconButton(
+                icon: Icon(Icons.settings, color: Colors.blue),
+                onPressed: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => CustomerSettingsPage(username: widget.username)))),
           ],
         ),
       ),
