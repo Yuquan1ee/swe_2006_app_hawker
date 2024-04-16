@@ -16,7 +16,6 @@ class _CustomerSettingsPageState extends State<CustomerSettingsPage> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  
 
   @override
   void dispose() {
@@ -26,111 +25,132 @@ class _CustomerSettingsPageState extends State<CustomerSettingsPage> {
     super.dispose();
   }
 
-  void _showChangeUsernameModal() {
-    showModalBottomSheet(
-        context: context,
-        builder: (BuildContext context) {
-          return _buildModalContent(
+  void _showChangeUsernameDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Change Username'),
+          content: TextField(
             controller: _usernameController,
-            label: 'New Username',
-            hint: 'Enter your new username',
-            onPressed: _updateUsername,
-          );
-        });
+            decoration: InputDecoration(
+              labelText: 'New Username',
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                _updateUsername();
+                Navigator.of(context).pop();
+              },
+              child: Text('Confirm'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
-  void _showChangeEmailModal() {
-    showModalBottomSheet(
-        context: context,
-        builder: (BuildContext context) {
-          return _buildModalContent(
+  void _showChangeEmailDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Change Email'),
+          content: TextField(
             controller: _emailController,
-            label: 'New Email',
-            hint: 'Enter your new email',
-            onPressed: _updateEmail,
-          );
-        });
+            decoration: InputDecoration(
+              labelText: 'New Email',
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                _updateEmail();
+                Navigator.of(context).pop();
+              },
+              child: Text('Confirm'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
-  void _showChangePasswordModal() {
-    showModalBottomSheet(
-        context: context,
-        builder: (BuildContext context) {
-          return _buildModalContent(
+  void _showChangePasswordDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Change Password'),
+          content: TextField(
             controller: _passwordController,
-            label: 'New Password',
-            hint: 'Enter your new password',
-            onPressed: _updatePassword,
-          );
-        });
+            obscureText: true,
+            decoration: InputDecoration(
+              labelText: 'New Password',
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                _updatePassword();
+                Navigator.of(context).pop();
+              },
+              child: Text('Confirm'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   void _updateUsername() async {
-  SettingController _settingsController = SettingController();
-  final success = await _settingsController.changeUsername(widget.username, _usernameController.text);
-  if (success) {
-    _showFeedback("Username successfully updated.");
-    // Replace the current page with a new CustomerSettingsPage instance that has the updated username
-    Navigator.pop(context); // Close the modal if update was not successful
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => CustomerSettingsPage(username: _usernameController.text)),
-    );
-  } else {
-    Navigator.pop(context); // Close the modal if update was not successful
-    _showFeedback("Failed to update username.");
+    SettingController _settingsController = SettingController();
+    final success = await _settingsController.changeUsername(widget.username, _usernameController.text);
+    if (success) {
+      _showFeedback("Username successfully updated.");
+      // Replace the current page with a new CustomerSettingsPage instance that has the updated username
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => CustomerSettingsPage(username: _usernameController.text)),
+      );
+    } else {
+      _showFeedback("Failed to update username.");
+    }
   }
-}
 
   void _updateEmail() async {
     SettingController _settingsController = SettingController();
     final success = await _settingsController.changeEmail(widget.username, _emailController.text);
-    Navigator.pop(context); // Close the modal
     _showFeedback(success ? "Email successfully updated." : "Failed to update email.");
   }
 
   void _updatePassword() async {
     SettingController _settingsController = SettingController();
     final success = await _settingsController.changePassword(widget.username, _passwordController.text);
-    Navigator.pop(context); // Close the modal
     _showFeedback(success ? "Password successfully updated." : "Failed to update password.");
   }
 
   void _showFeedback(String message) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
-  }
-
-
-  Widget _buildModalContent({
-    required TextEditingController controller,
-    required String label,
-    required String hint,
-    required VoidCallback onPressed,
-  }) {
-    return Padding(
-      padding: const EdgeInsets.all(20),
-      child: Wrap(
-        children: <Widget>[
-          TextField(
-            controller: controller,
-            decoration: InputDecoration(
-              labelText: label,
-              hintText: hint,
-            ),
-          ),
-          SizedBox(height: 20),
-          ElevatedButton(
-            onPressed: onPressed,
-            child: const Text('Confirm'),
-          ),
-          ElevatedButton(
-              onPressed: () => Navigator.pop(context), // Dismiss the modal sheet
-              child: const Text('Cancel'),
-            ),
-
-        ],
-      ),
-    );
   }
 
   @override
@@ -147,17 +167,17 @@ class _CustomerSettingsPageState extends State<CustomerSettingsPage> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             ElevatedButton(
-              onPressed: _showChangeUsernameModal,
+              onPressed: _showChangeUsernameDialog,
               child: const Text('Change Username'),
             ),
             SizedBox(height: 16),
             ElevatedButton(
-              onPressed: _showChangeEmailModal,
+              onPressed: _showChangeEmailDialog,
               child: const Text('Change Email'),
             ),
             SizedBox(height: 16),
             ElevatedButton(
-              onPressed: _showChangePasswordModal,
+              onPressed: _showChangePasswordDialog,
               child: const Text('Change Password'),
             ),
           ],
